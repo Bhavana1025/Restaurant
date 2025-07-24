@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant Food Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fefefe;
+      color: #333;
+    }
+    header {
+      background-color: #f44336;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 20px;
+    }
+    .menu, .cart {
+      flex: 1 1 45%;
+      margin: 10px;
+    }
+    .food-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .food-item img {
+      width: 100px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 15px;
+    }
+    button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .cart-item {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍽 Welcome to Our Restaurant</h1>
+  </header>
+
+  <main>
+    <section class="menu" id="menu">
+      <!-- Food items will be loaded here by JS -->
+    </section>
+
+    <section class="cart">
+      <h2>🛒 Your Cart</h2>
+      <div id="cart-items"></div>
+      <p>Total: ₹<span id="cart-total">0</span></p>
+    </section>
+  </main>
+
+  <script>
+    const menuItems = [
+      { id: 1, name: "Margherita Pizza", price: 250, img: "https://source.unsplash.com/100x80/?pizza" },
+      { id: 2, name: "Veg Burger", price: 150, img: "https://source.unsplash.com/100x80/?burger" },
+      { id: 3, name: "Pasta Alfredo", price: 200, img: "https://source.unsplash.com/100x80/?pasta" },
+      { id: 4, name: "Paneer Tikka", price: 180, img: "https://source.unsplash.com/100x80/?paneer" },
+      { id: 5, name: "French Fries", price: 100, img: "https://source.unsplash.com/100x80/?fries" },
+      { id: 6, name: "Veg Sandwich", price: 120, img: "https://source.unsplash.com/100x80/?sandwich" }
+    ];
+
+    let cart = [];
+
+    function renderMenu() {
+      const menuDiv = document.getElementById("menu");
+      menuItems.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "food-item";
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}" />
+          <div>
+            <h3>${item.name}</h3>
+            <p>Price: ₹${item.price}</p>
+            <button onclick="addToCart(${item.id})">Add to Cart</button>
+          </div>
+        `;
+        menuDiv.appendChild(div);
+      });
+    }
+
+    function addToCart(id) {
+      const item = menuItems.find(m => m.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...item, qty: 1 });
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const cartDiv = document.getElementById("cart-items");
+      cartDiv.innerHTML = "";
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.qty;
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          ${item.name} x ${item.qty} = ₹${item.price * item.qty}
+          <button onclick="removeFromCart(${item.id})">🗑</button>
+        `;
+        cartDiv.appendChild(div);
+      });
+      document.getElementById("cart-total").textContent = total;
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      renderCart();
+    }
+
+    window.onload = renderMenu;
+  </script>
+</body>
+</html>
